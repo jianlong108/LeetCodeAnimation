@@ -41,6 +41,7 @@
 
 - (void)dealloc
 {
+    [super dealloc];
     NSLog(@"dealloc == %d",self.value);
 }
 
@@ -92,28 +93,6 @@ ListNode * addTwoNums(ListNode *n1,ListNode*n2)
     return len1 > len2 ? n1 : n2;
 }
 
-//void creatLinkListTail(LinkList *p,int n)
-//{
-//    LinkList tmp;
-//    srand(time(0));
-//    *p = (LinkList)malloc(sizeof(Node));
-//    //指向尾部的结点
-//    LinkList tail = *p;
-//    tail->next = NULL;
-//    tail->val = n;
-//    for (int i=0; i<n; i++) {
-//        tmp = (LinkList)malloc(sizeof(Node));
-//        tmp->val = rand()%100 + 1;
-//
-//        tail->next = tmp;
-//        tail = tmp;
-//        std::cout << "赋值" << tmp->val << std::endl;
-//    }
-//    //结束链表。让其next为NULL
-//    tail->next = NULL;
-//}
-
-
 //生成链表
 void creatLinkListHead(ListNode *l,int *n,int len)
 {
@@ -137,20 +116,24 @@ int main(int argc, const char * argv[]) {
 //            NSLog(@"%d",l1.next.value);
 //            l1 = l1.next;
 //        }
+        
         ListNode *l2 = [ListNode nodeWithValue:3];
         creatLinkListHead(l2, b,3);
         
-//        while (l2) {
-//            NSLog(@"%d",l2.value);
+//        while (l2.next) {
+//            NSLog(@"%d",l2.next.value);
 //            l2 = l2.next;
 //        }
         
         ListNode *n = addTwoNums(l1.next, l2.next);
-        
+        ListNode *temp = nil;
         while (n) {
             NSLog(@"%d",n.value);
+            temp = n;
             n = n.next;
+            [temp release];
         }
+    
     
     }
     return 0;

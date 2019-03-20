@@ -110,6 +110,8 @@ int main(int argc, const char * argv[]) {
         int a[3] = {2,4,3};
         int b[3] = {5,6,4};
         
+        //再生成链表的时候，使用尾插和头插，会产生两种不同的结果。
+        
         ListNode *l1 = [ListNode nodeWithValue:3];
         creatLinkListHead(l1, a,3);
 //        while (l1.next) {

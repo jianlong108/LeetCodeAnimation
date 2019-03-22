@@ -121,39 +121,150 @@ NSArray<NSNumber *>*shellSort(NSArray<NSNumber *> *array)
         }
         gap = (int)(gap/3);
     }
-    
-    for (int i = 1; i < array.count; i++) {
-        
-        //记录要插入的数据
-        NSNumber *tmp = arr_m[i];
-        // 从已经排序的序列最右边的开始比较，在已经排序的序列中找到比其小的数
-        int j = i;
-        while (j > 0 && j < arr_m.count && [tmp intValue] < [arr_m[j - 1] intValue]) {
-            arr_m[j] = arr_m[j-1];
-            j--;
-        }
-        if (j!=i) {
-            arr_m[j] = tmp;
+    return arr_m.copy;
+}
+
+//time(nlogn) space(1)
+
+NSArray<NSNumber *>* merge(NSArray<NSNumber *> *left,NSArray<NSNumber *>*right)
+{
+    NSMutableArray *result = [NSMutableArray arrayWithCapacity:left.count+right.count];
+    while (left.count > 0 && right.count > 0) {
+        if ([left[0] intValue] <= [right[0] intValue]) {
+            [result addObject:left[0]];
+            left = [left subarrayWithRange:NSMakeRange(1, left.count-1)];
+        } else {
+            [result addObject:right[0]];
+            right = [right subarrayWithRange:NSMakeRange(1, right.count-1)];
         }
     }
+    while (left.count > 0) {
+        [result addObject:left[0]];
+        left = [left subarrayWithRange:NSMakeRange(1, left.count-1)];
+    }
+    while (right.count > 0) {
+        [result addObject:right[0]];
+        right = [right subarrayWithRange:NSMakeRange(1, right.count-1)];
+    }
+    return result;
+}
+//归并算法
+NSArray<NSNumber *>*MergeSort(NSArray<NSNumber *> *array)
+{
+    NSMutableArray *arr_m = array.mutableCopy;
+    if (arr_m.count < 2) {
+        return arr_m.copy;
+    }
     
-    return arr_m.copy;
+    int middle = (int)(arr_m.count / 2);
+    NSArray *left = [arr_m subarrayWithRange:NSMakeRange(0, middle)];
+    NSArray *right = [arr_m subarrayWithRange:NSMakeRange(middle, arr_m.count-middle)];
+    
+    return merge(MergeSort(left), MergeSort(right));
+}
+
+//快排
+void swapFunc(NSMutableArray<NSNumber *> *arr,int i,int j)
+{
+    NSNumber *tmp = arr[i];
+    arr[i] = arr[j];
+    arr[j] = tmp;
+    
+}
+
+int partition(NSMutableArray<NSNumber *> *arr,int left,int right)
+{
+    int partiton = left;
+    int index = partiton + 1;
+    for (int i = index; i <= right; i++) {
+        if ([arr[i] intValue] < [arr[partiton] intValue]) {
+            if (index != i) {
+                swapFunc(arr, i, index);
+            }
+            
+            index++;
+        }
+    }
+    swapFunc(arr, partiton, index-1);
+    return index - 1;
+}
+
+NSArray<NSNumber *>*sort(NSMutableArray<NSNumber *> *array,int left,int right)
+{
+    if (left < right) {
+        //找到基准值
+        int p = partition(array, left, right);
+        //排列基准左边序列
+        sort(array, left, p-1);
+        //排列基准右边序列
+        sort(array, p+1, right);
+    }
+    return array;
+}
+
+NSArray<NSNumber *>*QuickSort(NSArray<NSNumber *> *array)
+{
+    NSMutableArray *arr_m = array.mutableCopy;
+    return sort(arr_m,0,(int)(arr_m.count-1));
+}
+
+void heapify(NSMutableArray<NSNumber *> *arr, int i, int len) {
+    int left = 2 * i + 1;
+    int right = 2 * i + 2;
+    int largest = i;
+    if (left < len && arr[left] > arr[largest]) {
+        largest = left;
+    }
+    if (right < len && arr[right] > arr[largest]) {
+        largest = right;
+    }
+    if (largest != i) {
+        swapFunc(arr, i, largest);
+        heapify(arr, largest, len);
+    }
+}
+
+void buildMaxHeap(NSMutableArray<NSNumber *> *arr, int len) {
+    for (int i = (int)(len / 2); i >= 0; i--) {
+        heapify(arr, i, len);
+    }
+}
+NSArray<NSNumber *> * heapSort(NSArray<NSNumber *> *array) {
+    // 对 arr 进行拷贝，不改变参数内容
+    NSMutableArray *arr_m = array.mutableCopy;
+    
+    int len = (int)arr_m.count;
+    buildMaxHeap(arr_m, len);
+    for (int i = len - 1; i > 0; i--) {
+        swapFunc(arr_m, 0, i);
+        len--;
+        heapify(arr_m, 0, len);
+    }
+    return arr_m;
 }
 
 int main(int argc, const char * argv[]) {
     @autoreleasepool {
-        NSArray *a = bubbleSort(@[@(1),@(3),@(2),@(7),@(5)]);
-        NSLog(@"%@",a);
+//        NSArray *a = bubbleSort(@[@(1),@(3),@(2),@(7),@(5)]);
+//        NSLog(@"%@",a);
+//
+//        NSArray *b = SelectionSort(@[@(1),@(3),@(2),@(7),@(5)]);
+//        NSLog(@"%@",b);
+//
+//        NSArray *c = InsertSort(@[@(2),@(5),@(3),@(7),@(1)]);
+//        NSLog(@"%@",c);
+//
+//        NSArray *d = shellSort(@[@(8),@(9),@(1),@(7),@(2),@(3),@(5),@(4),@(6),@(0)]);
+//        NSLog(@"%@",d);
+//        NSArray *e = MergeSort(@[@(8),@(9),@(1),@(7),@(2),@(3),@(5),@(4),@(6),@(0)]);
+//        NSLog(@"%@",e);
         
-        NSArray *b = SelectionSort(@[@(1),@(3),@(2),@(7),@(5)]);
-        NSLog(@"%@",b);
         
-        NSArray *c = InsertSort(@[@(2),@(5),@(3),@(7),@(1)]);
-        NSLog(@"%@",c);
+//        NSArray *f = QuickSort(@[@(8),@(9),@(1),@(7),@(2),@(3),@(5),@(4),@(6),@(0)]);
+//        NSLog(@"%@",f);
         
-        NSArray *d = shellSort(@[@(8),@(9),@(1),@(7),@(2),@(3),@(5),@(4),@(6),@(0)]);
-        NSLog(@"%@",d);
-        
+        NSArray *g = heapSort(@[@(8),@(9),@(1),@(7),@(2),@(3),@(5),@(4),@(6),@(0)]);
+        NSLog(@"%@",g);
     }
     return 0;
 }
